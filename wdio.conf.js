@@ -49,9 +49,16 @@ exports.config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [{
-        browserName: 'chrome'
-    }],
+    capabilities: [
+        {
+            maxInstances: 5,
+            browserName: 'chrome'
+        },
+        {
+            maxInstances: 5,
+            browserName: 'MicrosoftEdge'
+        }
+    ],
 
     //
     // ===================
@@ -178,8 +185,9 @@ exports.config = {
      * @param  {object} args     object that will be merged with the main configuration once worker is initialized
      * @param  {object} execArgv list of string arguments passed to the worker process
      */
-    // onWorkerStart: function (cid, caps, specs, args, execArgv) {
-    // },
+    onWorkerStart: function (cid, caps, specs, args, execArgv) {
+        console.log("Dieksekusi dari on worker start")
+    },
     /**
      * Gets executed just after a worker process has exited.
      * @param  {string} cid      capability id (e.g 0-0)
@@ -222,8 +230,9 @@ exports.config = {
      * @param {string}                   uri      path to feature file
      * @param {GherkinDocument.IFeature} feature  Cucumber feature object
      */
-    // beforeFeature: function (uri, feature) {
-    // },
+    beforeFeature: function (uri, feature) {
+        console.log("Dieksekusi di Before Feature: Menyalakan Database")
+    },
     /**
      *
      * Runs before a Cucumber Scenario.
@@ -252,8 +261,13 @@ exports.config = {
      * @param {number}             result.duration  duration of scenario in milliseconds
      * @param {object}             context          Cucumber World object
      */
-    // afterStep: function (step, scenario, result, context) {
-    // },
+    afterStep: async function (step, scenario, result, context) {
+        console.log("executed di after step 1")
+        if (result.passed) {
+            console.log("executed di after step 2")
+            await browser.saveScreenshot('./screenshot/failed-test.png')
+        }
+    },
     /**
      *
      * Runs after a Cucumber Scenario.

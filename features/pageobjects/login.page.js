@@ -1,40 +1,23 @@
-const { $ } = require('@wdio/globals')
-const Page = require('./page');
+const { $ } = require('@wdio/globals');
 
-/**
- * sub page containing specific selectors and methods for a specific page
- */
-class LoginPage extends Page {
-    /**
-     * define selectors using getter methods
-     */
-    get inputUsername () {
-        return $('#username');
-    }
+class LoginPage {
+    get inputUsername() { return $('#user-name'); }
+    get inputPassword() { return $('#password'); }
+    get btnLogin() { return $('#login-button'); }
+    get errorContainer() { return $('.error-message-container'); }
 
-    get inputPassword () {
-        return $('#password');
-    }
-
-    get btnSubmit () {
-        return $('button[type="submit"]');
-    }
-
-    /**
-     * a method to encapsule automation code to interact with the page
-     * e.g. to login using username and password
-     */
-    async login (username, password) {
+    async login(username, password) {
         await this.inputUsername.setValue(username);
         await this.inputPassword.setValue(password);
-        await this.btnSubmit.click();
+        await this.btnLogin.click();
     }
 
-    /**
-     * overwrite specific options to adapt it to page object
-     */
-    open () {
-        return super.open('login');
+    async getErrorMessage() {
+        if (await this.errorContainer.isExisting()) {
+            return await this.errorContainer.getText();
+        } else {
+            return 'No error message';
+        }
     }
 }
 
